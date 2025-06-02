@@ -17,8 +17,7 @@ struct Index {
         })
         .onClick(() => {
           this.message = 'Welcome';
-          let log = new Logger(0x0001,'测试','%{public}s %{public}s')
-          log.debug('测试','1')
+
         })
     }
     .height('100%')
