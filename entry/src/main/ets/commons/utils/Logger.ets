@@ -28,5 +28,6 @@ export class Logger{
     this.format = format;
   }
 
-
 }
+
+export let logger = new Logger(0x0001,'测试','%{public}s %{public}s')
