@@ -5,6 +5,19 @@
 
 #### 软件架构
 单层架构模式
+ets
+├── commons
+│   ├── components              // - 通用组件
+│   ├── constants               // - 全局常量数据
+│   └── utils                   // - 通用工具类
+├── entryability
+│   └── EntryAbility.ts
+├── models                      // - 数据模型
+├── pages
+│   ├── QuestionPage.ets        // - 页面组件
+│   └── Index.ets
+└── views
+    └── Question                // - 页面对应自定义组件
 
 #### 安装教程
 
