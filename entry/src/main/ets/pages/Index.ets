@@ -1,8 +1,4 @@
-import { HcSearchBox } from '../commons/components/HcSearchBox';
-import { HomePage } from '../commons/components/HomePage';
-import { InterviewPage } from '../commons/components/InterviewPage';
-import { MinePage } from '../commons/components/MinePage';
-import { ProjectPage } from '../commons/components/ProjectPage';
+import { HcSearchBox,HomePage,InterviewPage,MinePage,ProjectPage,HcClockIn} from '../commons/components';
 import { SetFullScreen } from '../commons/utils';
 
 interface TabItem {
@@ -61,6 +57,7 @@ struct Index {
           .width(24)
           .aspectRatio(1)
           HcSearchBox({ layoutWeightValue: 1})
+        HcClockIn({clockInCount:10})
       }
       Tabs({ index: this.activeIndex }) {
         ForEach(this.tabList, (item: TabItem, i) => {
