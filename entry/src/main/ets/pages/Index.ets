@@ -1,5 +1,6 @@
-import { enableFullScreen } from '../commons/utils/enableFullScreen';
-import { Logger } from '../commons/utils/Logger';
+import {SetFullScreen } from '../commons/utils/FullScreen';
+import { statusBar,Logger} from '../commons/utils';
+
 
 @Entry
 @Component
@@ -9,7 +10,19 @@ struct Index {
   @StorageProp('bottomHeight') bHeight: number = 0
 
   build() {
-    RelativeContainer() {
+    Column() {
+      Button('关闭沉浸式')
+        .onClick(()=>{
+          SetFullScreen.disableFullScreen()
+        })
+      Button('黑色状态栏')
+        .onClick(()=>{
+          statusBar.setDarkBar()
+        })
+      Button('白色状态栏')
+        .onClick(()=>{
+          statusBar.setLightBar()
+        })
       Text(this.message)
         .id('HelloWorld')
         .fontSize($r('app.float.page_text_font_size'))
@@ -20,7 +33,7 @@ struct Index {
         })
         .onClick(() => {
           this.message = 'Welcome';
-          new enableFullScreen().enableFullScreen()
+          SetFullScreen.enableFullScreen()
         })
     }
     .padding({top:this.tHeight,bottom:this.bHeight})
