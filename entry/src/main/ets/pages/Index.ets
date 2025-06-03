@@ -1,3 +1,4 @@
+import { HcSearchBox } from '../commons/components/HcSearchBox';
 import { HomePage } from '../commons/components/HomePage';
 import { InterviewPage } from '../commons/components/InterviewPage';
 import { MinePage } from '../commons/components/MinePage';
@@ -55,6 +56,12 @@ struct Index {
 
   build() {
     Column() {
+      Row({ space: 16 }) {
+        Image($r('app.media.ic_home_scan'))
+          .width(24)
+          .aspectRatio(1)
+          HcSearchBox({ layoutWeightValue: 1})
+      }
       Tabs({ index: this.activeIndex }) {
         ForEach(this.tabList, (item: TabItem, i) => {
           TabContent() {
@@ -71,6 +78,7 @@ struct Index {
           .tabBar(this.TabBarBuilder(item, i))
         })
       }
+      .layoutWeight(1)
       .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
       .barPosition(BarPosition.End)
       .scrollable(false)
