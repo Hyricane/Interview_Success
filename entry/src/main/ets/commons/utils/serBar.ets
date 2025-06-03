@@ -1,0 +1,28 @@
+import { window } from "@kit.ArkUI"
+import { logger, Logger } from "./Logger"
+
+export class StatusBar {
+  setDarkBar() {
+    this.setBar('#000000')
+  }
+
+  setLightBar() {
+    this.setBar('#ffffff')
+  }
+
+  async setBar(color: string) {
+    try {
+      const ctx = AppStorage.get<Context>('context')
+      if (ctx) {
+        const winObj = await window.getLastWindow(ctx)
+        winObj.setWindowSystemBarProperties({
+          statusBarContentColor: color
+        })
+      }
+    } catch (err) {
+      logger.error('StatusBar setColor error', JSON.stringify(err))
+    }
+  }
+}
+
+export const statusBar = new StatusBar()
