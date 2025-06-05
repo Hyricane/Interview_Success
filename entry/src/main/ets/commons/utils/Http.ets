@@ -16,8 +16,8 @@ import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "@ohos/axio
 //   res.data//返回数据
 //   res.data.message
 //   res.data.data
-  // 1.泛型麻烦 希望可以省略不需要的泛型
-  // 2.获取返回数据麻烦,希望将res.data集成在一起
+  // 1.泛型麻烦 希望可以省略不需要的泛型 =>自行封装请求类
+  // 2.获取返回数据麻烦,希望将res.data集成在一起 => 拦截器
 // }
 //由此,我们基于Axios自行封装类Http
 
