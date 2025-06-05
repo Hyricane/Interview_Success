@@ -1,5 +1,6 @@
 import { HcTag } from '../commons/components/HcTag'
 import { QuestionItemComp } from '../commons/components/QuestionItemComp'
+import { QuestionListComp } from '../commons/components/QuestionListComp'
 import { QuestionType } from '../models/index'
 
 @Component
@@ -35,25 +36,7 @@ export struct HomeCategory {
       ForEach(this.questionTypeList, (item: QuestionType, i) => {
         TabContent() {
           // TODO 试题列表
-          Column() {
-            List(){
-              ForEach(new Array(10).fill(0), () => {
-                ListItem(){
-                  QuestionItemComp({
-                    item: {
-                      id: '100',
-                      stem: '请说下ArkUI的容器组件有哪些？',
-                      difficulty: 3,
-                      likeCount: 23,
-                      views: 423,
-                      readFlag: 1
-                    }
-                  })
-                }
-              })
-            }
-
-          }
+          QuestionListComp()
         }
         .tabBar(this.TabBarBuilder(item,i))
       })
