@@ -1,27 +1,41 @@
-import { HcTag } from '../commons/components/HcTag'
-import { QuestionItemComp } from '../commons/components/QuestionItemComp'
-import { QuestionListComp } from '../commons/components/QuestionListComp'
-import { QuestionType } from '../models/index'
+import { HcTag, QuestionItemComp, QuestionListComp } from "../commons/components"
+import { http } from "../commons/utils"
+import { QuestionType } from "../models"
+
 
 @Component
 export struct HomeCategory {
-  @State questionTypeList: QuestionType[] = mockData
+  // 将来请求后端的数据
+  @State list: QuestionType[] = []
   @State activeIndex: number = 0
+
+  aboutToAppear(): void {
+    this.getCategory()
+  }
+
+  async getCategory() {
+    // 请求分类
+    const res = await http.request<QuestionType[]>({ url: 'question/type' })
+    this.list = res // 分类数组
+  }
+
   @Builder
-  TabBarBuilder(item: QuestionType, i: number) {
+  TabBarBuilder(item: QuestionType, index: number) {
     Row() {
-      Stack({ alignContent: Alignment.Bottom }){
+      Stack({ alignContent: Alignment.Bottom }) {
         Text(item.name)
-          .fontSize(15)
-          .fontColor(this.activeIndex === i ? $r('app.color.black') : $r('app.color.common_gray_01'))
           .height(44)
+          .fontSize(15)
+          .fontColor(this.activeIndex == index ? $r('app.color.black') : $r('app.color.common_gray_01'))
+
         Text()
-          .width(this.activeIndex === i ? 20 : 0)
+          .width(this.activeIndex == index ? 20 : 0)
           .height(2)
           .backgroundColor($r('app.color.black'))
-          .animation({ duration: this.activeIndex === i ? 300 : 0 })
+          .animation({ duration: this.activeIndex == index ? 300 : 0 })
       }
-      if (item.displayNewestFlag === 1) {
+
+      if (item.displayNewestFlag == 1) {
         Image($r('app.media.ic_home_new'))
           .width(32)
           .height(14)
@@ -29,35 +43,26 @@ export struct HomeCategory {
           .margin({ left: 4 })
       }
     }
-    .padding({ left: 16})
+    .padding({ left: 16 })
   }
+
   build() {
     Tabs({ index: this.activeIndex }) {
-      ForEach(this.questionTypeList, (item: QuestionType, i) => {
+      ForEach(this.list, (item: QuestionType, index: number) => {
         TabContent() {
-          // TODO 试题列表
-          QuestionListComp()
-        }
-        .tabBar(this.TabBarBuilder(item,i))
+          QuestionListComp({
+            typeId: item.id // 分类id传入  将来根据分类id获取分类列表数据 渲染
+          })
+        }.tabBar(this.TabBarBuilder(item, index))
       })
     }
-    .onTabBarClick((i) => {
-      this.activeIndex = i
+    .onTabBarClick((index) => {
+      this.activeIndex = index
     })
+    .animationDuration(0)
     .barMode(BarMode.Scrollable)
     .barHeight(44)
     .scrollable(false)
     .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
   }
 }
-
-const mockData: QuestionType[] = [
-  { id: 1, name: 'ArkTS', displayNewestFlag: 0 },
-  { id: 2, name: 'ArkUI', displayNewestFlag: 1 },
-  { id: 3, name: 'Hap', displayNewestFlag: 1 },
-  { id: 4, name: 'Hsp', displayNewestFlag: 0 },
-  { id: 5, name: 'Har', displayNewestFlag: 0 },
-  { id: 6, name: 'Ability', displayNewestFlag: 0 },
-  { id: 7, name: 'Stage', displayNewestFlag: 0 },
-  { id: 8, name: 'Kit', displayNewestFlag: 0 }
-]
