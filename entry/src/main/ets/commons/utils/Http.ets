@@ -59,3 +59,4 @@ export class Http{
     return instance<null,T,R>(obj)
   }
 }
+export const http = new Http()
