@@ -1,5 +1,4 @@
 import { HomeCategory } from "../../views/HomeCategory"
-import { QuestionItemComp } from "./QuestionItemComp"
 
 @Component
 export struct HomePage {
