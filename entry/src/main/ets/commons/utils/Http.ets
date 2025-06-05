@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "@ohos/axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "@ohos/axios";
 
 //测试类型
 // interface CateResType{
@@ -30,11 +30,32 @@ interface INTERVIEW_ResType<T>{
   data:T
 }
 
+// 创建axios实例
+const instance = axios.create({
+  baseURL:'https://api-harmony-teach.itheima.net/hm/',
+  // 最大延迟时间
+  timeout:10000
+})
+
+// 添加响应拦截器
+instance.interceptors.response.use((response:AxiosResponse) => {
+  // 2xx 范围内的状态码都会触发该函数。
+  // 剥离出关键响应数据
+  return response.data.data
+}, (error:AxiosError) => {
+  // 超出 2xx 范围的状态码都会触发该函数。
+  // 对响应错误做点什么
+  return Promise.reject(error);
+});
+
 export class Http{
   //AxiosRequestConfig是Axios中封装好的对象类型,含有发送请求的所有类型
   // AxiosRequestConfig后可传泛型,即规定data[]的类型.eg AxiosRequestConfig<string>,data类型为string
-  request<T>(obj:AxiosRequestConfig){
+  request<T,R=Object>(obj:AxiosRequestConfig<R>){
     // AxiosResponse<T,null>,形式泛型T
-    return axios<null,AxiosResponse<INTERVIEW_ResType<T>,null>,null>(obj)
+    // return axios<null,AxiosResponse<INTERVIEW_ResType<T>,null>,null>(obj)
+
+    // 因为关键数据已经被剥离,所以响应数据泛型就为传入泛型
+    return instance<null,T,R>(obj)
   }
 }
