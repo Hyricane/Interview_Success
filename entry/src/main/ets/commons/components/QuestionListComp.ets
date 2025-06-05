@@ -1,6 +1,15 @@
-import { QuestionItem } from '../../models'
+import { QuestionItem, QuestionType } from '../../models'
 import { QuestionItemComp } from '.'
+import axios, { AxiosResponse } from '@ohos/axios'
 
+//测试类型
+interface CateResType{
+  code:number
+  success:boolean
+  message:string
+  data:QuestionType[]
+}
+//
 @Component
 export struct QuestionListComp {
   // 是否加载完成
@@ -60,6 +69,21 @@ export struct QuestionListComp {
     }
     .height(80)
   }
+
+  //测试代码
+  async aboutToAppear(){
+    const res = await axios<null,AxiosResponse<CateResType,null>,null>({
+      url:'https://api-harmony-teach.itheima.net/hm/question/type'
+    })
+
+    res.data//返回数据
+    res.data.message
+    res.data.data
+    // 1.泛型麻烦 希望可以省略不需要的泛型
+    // 2.获取返回数据麻烦,希望将res.data集成在一起
+  }
+  //
+
   build() {
     Refresh({ refreshing: $$this.isRefreshing }) {
       List() {
