@@ -41,7 +41,11 @@ const instance = axios.create({
 instance.interceptors.response.use((response:AxiosResponse) => {
   // 2xx 范围内的状态码都会触发该函数。
   // 剥离出关键响应数据
-  return response.data.data
+  if (response.data.code==10000) {
+    return response.data.data
+  }else {
+    return Promise.reject(response.data)
+  }
 }, (error:AxiosError) => {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
