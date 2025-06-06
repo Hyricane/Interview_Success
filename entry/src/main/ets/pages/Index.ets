@@ -1,5 +1,6 @@
-import { HcSearchBox,HomePage,InterviewPage,MinePage,ProjectPage,HcClockIn} from '../commons/components';
+import { HcSearchBox,HomePage,InterviewPage,ProjectPage,HcClockIn} from '../commons/components';
 import { SetFullScreen } from '../commons/utils';
+import { MinePage } from '../views/Mine/MinePage';
 
 interface TabItem {
   icon: Resource;
@@ -52,13 +53,6 @@ struct Index {
 
   build() {
     Column() {
-      Row({ space: 16 }) {
-        Image($r('app.media.ic_home_scan'))
-          .width(24)
-          .aspectRatio(1)
-          HcSearchBox({ layoutWeightValue: 1})
-        HcClockIn({clockInCount:10})
-      }
       Tabs({ index: this.activeIndex }) {
         ForEach(this.tabList, (item: TabItem, i) => {
           TabContent() {
