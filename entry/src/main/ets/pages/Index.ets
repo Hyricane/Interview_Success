@@ -44,8 +44,8 @@ struct Index {
         .fontColor(this.activeIndex === index ? $r('app.color.black') : $r('app.color.common_gray_01'))
     }
   }
-  @State activeIndex:number = 0
-  @StorageProp('topHeight') tHeight: number = 0
+  @State activeIndex:number = 3
+  // @StorageProp('topHeight') tHeight: number = 0
   @StorageProp('bottomHeight') bHeight: number = 0
   aboutToAppear(): void {
     SetFullScreen.enableFullScreen()
@@ -78,7 +78,7 @@ struct Index {
         this.activeIndex = index
       })
     }
-    .padding({top:this.tHeight,bottom:this.bHeight})
+    .padding({bottom:this.bHeight})
     .width('100%')
     .height('100%')
     .backgroundColor($r('app.color.white'))

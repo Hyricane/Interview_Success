@@ -3,6 +3,7 @@ import { HomeCategory } from "./HomeCategory"
 
 @Component
 export struct HomePage {
+  @StorageProp('topHeight') tHeight: number = 0
   swiperItemList:ResourceStr[]=[
     $r('app.media.banner_pj'),
     $r('app.media.banner_ai'),
@@ -25,6 +26,7 @@ export struct HomePage {
       .layoutWeight(1)
       .backgroundColor($r('app.color.white'))
     }
+    .padding({top:this.tHeight})
   }
   @Builder swiperBuilder(siwperItemList:ResourceStr[]){
     Swiper(){
