@@ -1,4 +1,8 @@
 import { HcNavBar } from '../commons/components'
+import { http } from '../commons/utils'
+import router from '@ohos.router'
+import { User } from '../models'
+import { promptAction } from '@kit.ArkUI'
 
 @Entry
 @Component
@@ -13,7 +17,39 @@ struct LoginPage {
   isAgree: boolean = false
   @State
   loading: boolean = false
+  async login() {
+    try {
+      if (this.loading) {
+        return
+      }
+      if (!this.mobile) {
+        return promptAction.showToast({ message: '请输入用户名' })
+      }
+      if (!this.code) {
+        return promptAction.showToast({ message: '请输入密码' })
+      }
+      if (!this.isAgree) {
+        return promptAction.showToast({ message: '请勾选已阅读并同意' })
+      }
+      this.loading =true
+      const res = await http.request<User>({
+        url:'login',
+        method:'post',
+        data:{
+          username:this.mobile,
+          password:this.code
+        }
+      })
+      this.loading=false
+      AppStorage.setOrCreate<User>('user',res)
+      AlertDialog.show({message:JSON.stringify(res)})
+      router.back()
+    }catch (err){
+      promptAction.showToast({message:err.message})
+      this.loading = false
+    }
 
+  }
   build() {
     Column() {
       HcNavBar({ showRightIcon: false })
@@ -86,6 +122,7 @@ struct LoginPage {
         .stateEffect(false)
         .onClick(() => {
           // TODO
+          this.login()
         })
       }
       .padding({ left: 36, right: 36, top: 30 })
