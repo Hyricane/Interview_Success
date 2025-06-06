@@ -32,3 +32,15 @@ export enum SortType{
   High2Low = 21,
   Recommend = 30
 }
+
+export interface User {
+  id: string
+  username: string
+  avatar: string
+  token: string
+  nickName?: string
+  // 学习时长
+  totalTime?: number
+  // 打卡次数
+  clockinNumbers?: number
+}
