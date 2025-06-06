@@ -1,6 +1,6 @@
 import axios, { AxiosResponse } from '@ohos/axios'
-import { QuestionItemComp } from '.'
-import { PageData, QuestionItem, QuestionType } from '../../models'
+import { HcSkeleton, HcSkeletonItem, QuestionItemComp } from '.'
+import { PageData, QuestionItem, QuestionType, SortType } from '../../models'
 import { http } from '../utils/Http'
 
 // 后端返回的分类数据类型
@@ -38,6 +38,9 @@ import { http } from '../utils/Http'
 
 @Component
 export struct QuestionListComp {
+  @Prop activeIndex:number = 0
+  @Prop index:number = 0
+  @Prop @Watch('fn') sort:SortType = SortType.Default
   // 传入的分类id
   @Prop typeId: number
   @State list: QuestionItem[] = [] // 文章列表数据 暂时为空
@@ -47,7 +50,11 @@ export struct QuestionListComp {
   // 刚开始数据是加载了一部分  等到有一天数据真全获取完了  改true
   @State isFinished: boolean = false // 标识数据是否全部加载完
   @State page: number = 1 // 页码
-
+  fn(){
+    if (this.activeIndex == this.index) {
+      this.isRefreshing = true
+    }
+  }
   getList():Promise<PageData> {
     return http.request<PageData>({
       url: 'question/list',
@@ -55,8 +62,9 @@ export struct QuestionListComp {
         questionBankType: 10, // 表示获取面试题
         type: this.typeId, // 获取哪个分类
         page: 1, // 获取第几页
-        pageSize: 10 // 每页获取几条数据
+        pageSize: 10, // 每页获取几条数据
         // 还有一些其他参数
+        sort:this.sort,
       }
     })
 
@@ -120,6 +128,7 @@ export struct QuestionListComp {
     .height(80)
   }
 
+
   async onLoad() {
     const res = await this.getList()
 
@@ -139,13 +148,12 @@ export struct QuestionListComp {
 
   build() {
     Refresh({ refreshing: $$this.isRefreshing }) {
-      // 虽然数据是模拟出来的  但是我们也想做出上拉加载 下拉刷新的效果
       // 1. 下拉刷新
       List() {
         ForEach(this.list, (item: QuestionItem) => {
           ListItem() {
             QuestionItemComp({
-              item: item
+              item: item,
             })
           }
         })
