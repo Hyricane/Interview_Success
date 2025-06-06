@@ -1,14 +1,17 @@
+import { SortType } from "../../models"
+
 @Component
 export struct FilterButton {
   text: string = ''
   isNew: boolean = false
   isSort: boolean = false
-
+  @Prop isSelect:boolean = false
+  @Prop sort:SortType = SortType.Default
   build() {
     Row() {
       Text(this.text)
         .fontSize(12)
-        .fontColor($r('app.color.black'))
+        .fontColor(this.isSelect? $r('app.color.common_main_color'):$r('app.color.black'))
       if (this.isNew) {
         Image($r('app.media.ic_home_new'))
           .width(32)
@@ -19,8 +22,10 @@ export struct FilterButton {
       if (this.isSort) {
         Column() {
           Image($r('sys.media.ohos_ic_public_arrow_up'))
+            .fillColor(this.sort%2==1&&this.isSelect?$r('app.color.common_main_color'):$r('app.color.black'))
             .size({ width: 12, height: 6 })
           Image($r('sys.media.ohos_ic_public_arrow_down'))
+            .fillColor(this.sort%2==0&&this.isSelect?$r('app.color.common_main_color'):$r('app.color.black'))
             .size({ width: 12, height: 6 })
         }
         .margin({ top: -0.5, left: 2 })
