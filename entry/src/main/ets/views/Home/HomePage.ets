@@ -1,4 +1,5 @@
-import { HomeCategory } from "../../views/HomeCategory"
+import { HcClockIn, HcSearchBox } from "../../commons/components"
+import { HomeCategory } from "./HomeCategory"
 
 @Component
 export struct HomePage {
@@ -9,6 +10,13 @@ export struct HomePage {
   ]
   build() {
     Column(){
+      Row({ space: 16 }) {
+        Image($r('app.media.ic_home_scan'))
+          .width(24)
+          .aspectRatio(1)
+        HcSearchBox({ layoutWeightValue: 1})
+        HcClockIn({clockInCount:10})
+      }
       this.swiperBuilder(this.swiperItemList)
       Column(){
         HomeCategory()
