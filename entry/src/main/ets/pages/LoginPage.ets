@@ -32,7 +32,7 @@ struct LoginPage {
         return promptAction.showToast({ message: '请勾选已阅读并同意' })
       }
       this.loading =true
-      const res = await http.request<User>({
+      const user = await http.request<User>({
         url:'login',
         method:'post',
         data:{
@@ -41,8 +41,7 @@ struct LoginPage {
         }
       })
       this.loading=false
-      AppStorage.setOrCreate<User>('user',res)
-      AlertDialog.show({message:JSON.stringify(res)})
+      AppStorage.setOrCreate<User>('user',user)
       router.back()
     }catch (err){
       promptAction.showToast({message:err.message})
