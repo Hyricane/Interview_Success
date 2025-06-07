@@ -124,7 +124,7 @@ export struct MinePage {
             })
         }
 
-        HcClockIn({ clockInCount: 10 })
+        HcClockIn({ clockInCount: this.user.clockinNumbers})
       }
       .width('100%')
       .height(100)
