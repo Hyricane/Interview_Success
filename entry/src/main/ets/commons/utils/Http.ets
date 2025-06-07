@@ -1,5 +1,7 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "@ohos/axios";
 import { auth } from ".";
+import { User } from "../../models";
+import { promptAction, router } from "@kit.ArkUI";
 
 //测试类型
 // interface CateResType{
@@ -38,7 +40,7 @@ const instance = axios.create({
 })
 
 // 添加请求拦截器
-instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{
+instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{//config为发送请求时传入的对象
   const user = auth.getUser()
   //如果请求中含有token
   if (user.token){
@@ -64,7 +66,15 @@ instance.interceptors.response.use((response:AxiosResponse) => {
 }, (error:AxiosError) => {
   // 超出 2xx 范围的状态码都会触发该函数。
   // 对响应错误做点什么
-  return Promise.reject(error);
+  // token并非不变,一段时间后会过期,需要做处理,重新登录添加新token即可
+  // 判断是否是token过期引起的错误
+  if (error.response?.status==401) {
+    // 清空登录信息
+    auth.setUser({} as User)
+    //跳转到登录页
+    router.pushUrl({url:'pages/LoginPage'},router.RouterMode.Single)
+    promptAction.showToast({message:'登录已过期,请重新登录'})
+  }
 });
 
 export class Http{
