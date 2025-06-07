@@ -1,5 +1,5 @@
 import { HcSearchBox,HomePage,InterviewPage,ProjectPage,HcClockIn} from '../commons/components';
-import { SetFullScreen } from '../commons/utils';
+import { auth, SetFullScreen } from '../commons/utils';
 import { MinePage } from '../views/Mine/MinePage';
 
 interface TabItem {
@@ -49,6 +49,7 @@ struct Index {
   @StorageProp('bottomHeight') bHeight: number = 0
   aboutToAppear(): void {
     SetFullScreen.enableFullScreen()
+    auth.initUser()
   }
 
   build() {

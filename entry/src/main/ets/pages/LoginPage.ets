@@ -1,5 +1,5 @@
 import { HcNavBar } from '../commons/components'
-import { http } from '../commons/utils'
+import { auth, http } from '../commons/utils'
 import router from '@ohos.router'
 import { User } from '../models'
 import { promptAction } from '@kit.ArkUI'
@@ -42,6 +42,7 @@ struct LoginPage {
       })
       this.loading=false
       AppStorage.setOrCreate<User>('user',user)
+      auth.setUser(user)
       router.back()
     }catch (err){
       promptAction.showToast({message:err.message})

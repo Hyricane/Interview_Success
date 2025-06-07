@@ -1,6 +1,6 @@
 import { HcClockIn } from '../../commons/components'
 import { promptAction, router } from '@kit.ArkUI'
-import { FormatTime, statusBar } from '../../commons/utils'
+import { FormatTime, statusBar,auth, UserInfoKey } from '../../commons/utils'
 import { User } from '../../models'
 
 interface Nav {
@@ -19,7 +19,7 @@ interface Tool {
 
 @Component
 export struct MinePage {
-  @StorageProp('user') user: User = {} as User
+  @StorageProp(UserInfoKey) user: User = {} as User
   @StorageProp('topHeight')
   topHeight: number = 0
 
