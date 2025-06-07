@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "@ohos/axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "@ohos/axios";
+import { auth } from ".";
 
 //测试类型
 // interface CateResType{
@@ -29,13 +30,27 @@ interface INTERVIEW_ResType<T>{
   message:string,
   data:T
 }
-
 // 创建axios实例
 const instance = axios.create({
   baseURL:'https://api-harmony-teach.itheima.net/hm/',
   // 最大延迟时间
   timeout:10000
 })
+
+// 添加请求拦截器
+instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{
+  const user = auth.getUser()
+  //如果请求中含有token
+  if (user.token){
+    //则对请求数据头添加以下字段
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+  return config
+},
+  (err:AxiosError)=>{
+  return Promise.reject(err)
+  })
+
 
 // 添加响应拦截器
 instance.interceptors.response.use((response:AxiosResponse) => {
