@@ -1,8 +1,12 @@
 import { HcClockIn, HcSearchBox } from "../../commons/components"
+import { FormatTime } from "../../commons/utils"
+import { UserInfoKey } from "../../commons/utils/Auth"
+import { User } from "../../models"
 import { HomeCategory } from "./HomeCategory"
 
 @Component
 export struct HomePage {
+  @StorageProp(UserInfoKey) user: User = {} as User
   @StorageProp('topHeight') tHeight: number = 0
   swiperItemList:ResourceStr[]=[
     $r('app.media.banner_pj'),
@@ -16,7 +20,7 @@ export struct HomePage {
           .width(24)
           .aspectRatio(1)
         HcSearchBox({ layoutWeightValue: 1})
-        HcClockIn({clockInCount:10})
+        HcClockIn({clockInCount: this.user.clockinNumbers})
       }
       this.swiperBuilder(this.swiperItemList)
       Column(){
