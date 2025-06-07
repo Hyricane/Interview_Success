@@ -1,6 +1,6 @@
 import { User } from "../../models"
 
-const UserInfoKey = 'user'
+export const UserInfoKey = 'user'
 
 export class Auth{
   initUser(){
