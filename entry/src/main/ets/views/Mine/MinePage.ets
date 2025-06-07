@@ -1,6 +1,7 @@
 import { HcClockIn } from '../../commons/components'
 import { promptAction, router } from '@kit.ArkUI'
-import { statusBar } from '../../commons/utils'
+import { FormatTime, statusBar } from '../../commons/utils'
+import { User } from '../../models'
 
 interface Nav {
   icon: ResourceStr
@@ -18,6 +19,7 @@ interface Tool {
 
 @Component
 export struct MinePage {
+  @StorageProp('user') user: User = {} as User
   @StorageProp('topHeight')
   topHeight: number = 0
 
@@ -85,15 +87,15 @@ export struct MinePage {
   build() {
     Column({ space: 16 }) {
       Row({ space: 12 }) {
-        Image($r('app.media.ic_mine_avatar'))
+        Image(this.user.avatar || $r('app.media.ic_mine_avatar'))
           .alt($r('app.media.ic_mine_avatar'))
           .width(55)
           .aspectRatio(1)
           .borderRadius(55)
         // 是否登录
-        if (false) {
+        if (this.user.token) {
           Column({ space: 4 }) {
-            Text('用户名')
+            Text(this.user.nickName || this.user.username)
               .fontSize(18)
               .fontWeight(500)
               .maxLines(1)
@@ -154,7 +156,7 @@ export struct MinePage {
         this.navBuilder({
           icon: $r('app.media.ic_mine_study'),
           name: '累计学时',
-          other: '10小时',
+          other: FormatTime.getDHM(this.user.totalTime),
           onClick: () => {
             // TODO
           }
