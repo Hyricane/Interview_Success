@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from '@ohos/axios'
 import { HcSkeleton, HcSkeletonItem, QuestionItemComp } from '.'
 import { PageData, QuestionItem, QuestionType, SortType } from '../../models'
+import { auth } from '../utils'
 import { http } from '../utils/Http'
 
 // 后端返回的分类数据类型
@@ -156,6 +157,9 @@ export struct QuestionListComp {
               item: item,
             })
           }
+          .onClick(()=>{
+            auth.checkAuth({ url: 'pages/QuestionPage' })
+          })
         })
 
         this.LoadMoreBuilder()
