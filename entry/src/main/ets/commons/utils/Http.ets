@@ -45,7 +45,7 @@ instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{//config
   //如果请求中含有token
   if (user.token){
     //则对请求数据头添加以下字段
-    config.headers.Authorization = `Bearer ${user.token}`
+    config.headers.Authorization = `Bearer chuanjia${user.token}`
   }
   return config
 },
