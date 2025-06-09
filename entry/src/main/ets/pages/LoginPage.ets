@@ -3,6 +3,8 @@ import { auth, http } from '../commons/utils'
 import router from '@ohos.router'
 import { User } from '../models'
 import { promptAction } from '@kit.ArkUI'
+import { emitter } from '@kit.BasicServicesKit'
+import { LOGIN_EVENT } from '../commons/constants'
 
 @Entry
 @Component
@@ -43,7 +45,12 @@ struct LoginPage {
       this.loading=false
       AppStorage.setOrCreate<User>('user',user)
       auth.setUser(user)
-      router.back()
+      let obj = router.getParams() as Record<string,string>
+      if (obj.return_url) {
+        router.replaceUrl({url:obj.return_url})
+      }else {
+        router.back()
+      }
     }catch (err){
       promptAction.showToast({message:err.message})
       this.loading = false
@@ -123,6 +130,7 @@ struct LoginPage {
         .onClick(() => {
           // TODO
           this.login()
+          emitter.emit(LOGIN_EVENT)
         })
       }
       .padding({ left: 36, right: 36, top: 30 })
