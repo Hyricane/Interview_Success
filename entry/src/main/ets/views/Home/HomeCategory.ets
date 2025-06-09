@@ -3,7 +3,9 @@ import { FilterButton,
   HcSkeletonItem, HcTag, QuestionItemComp, QuestionListComp } from "../../commons/components"
 import { http } from "../../commons/utils"
 import { QuestionType, SortType } from "../../models"
+import { emitter } from "@kit.BasicServicesKit"
 
+import { LOGIN_EVENT} from '../../commons/constants'
 // 只支持全局
 @Extend(Text)
 function textTitle() {
@@ -171,6 +173,9 @@ export struct HomeCategory {
 
   aboutToAppear(): void {
     this.getCategory()
+    emitter.on(LOGIN_EVENT,()=>{
+      this.getCategory()
+    })
   }
 
   async getCategory() {
