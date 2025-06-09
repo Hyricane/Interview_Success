@@ -20,7 +20,12 @@ export class Auth{
     if (this.getUser().token) {
       router.pushUrl(obj)
     }else{
-      router.pushUrl({ url: 'pages/LoginPage',params:{return_url:obj.url}})
+      const params = obj.params as Record<string,string>
+      params.reurn_url = obj.url
+      router.pushUrl({
+        url: 'pages/LoginPage',
+        params:params
+      })
     }
   }
 }

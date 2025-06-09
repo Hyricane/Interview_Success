@@ -45,9 +45,9 @@ struct LoginPage {
       this.loading=false
       AppStorage.setOrCreate<User>('user',user)
       auth.setUser(user)
-      let obj = router.getParams() as Record<string,string>
+      let obj = router.getParams() as Record<string,string> || {}
       if (obj.return_url) {
-        router.replaceUrl({url:obj.return_url})
+        router.replaceUrl({url:obj.return_url,params:obj})
       }else {
         router.back()
       }

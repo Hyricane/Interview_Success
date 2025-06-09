@@ -158,7 +158,7 @@ export struct QuestionListComp {
             })
           }
           .onClick(()=>{
-            auth.checkAuth({ url: 'pages/QuestionPage' })
+            auth.checkAuth({ url: 'pages/QuestionPage',params:{item:item}})
           })
         })
 
