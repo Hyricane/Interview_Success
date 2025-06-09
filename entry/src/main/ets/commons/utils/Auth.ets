@@ -1,4 +1,5 @@
 import { User } from "../../models"
+import { router } from "@kit.ArkUI"
 
 export const UserInfoKey = 'user'
 
@@ -13,6 +14,14 @@ export class Auth{
 
   getUser(){
     return AppStorage.get<User>(UserInfoKey) || {} as User
+  }
+
+  checkAuth(obj:router.RouterOptions){
+    if (this.getUser().token) {
+      router.pushUrl(obj)
+    }else{
+      router.pushUrl({ url: 'pages/LoginPage',params:{return_url:obj.url}})
+    }
   }
 }
 
