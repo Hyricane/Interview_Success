@@ -1,48 +1,70 @@
-import { window } from '@kit.ArkUI'
-import { logger } from './Logger'
+import { window } from "@kit.ArkUI"
+import { logger } from "./Logger"
 
-export class FullScreen{
-  async enableFullScreen(){
+// 获取当前应用内最上层的子窗口
+// const xx = await window.getLastWindow()
+
+// 设置主窗口或子窗口的布局是否为沉浸式布局
+// xx.setWindowLayoutFullScreen
+
+// 获取当前应用窗口内容规避的区域
+// xx.getWindowAvoidArea
+
+// 设置状态栏的文字颜色
+// xx.setWindowSystemBarProperties
+
+export class FullScreen {
+  // 启动全屏
+  async enable() {
     try {
-      //传入上下文 定义在entryAbility中
       const ctx = AppStorage.get<Context>('context')
-      if (ctx){
-        const winObj = await window.getLastWindow(ctx) //获得上层窗口对象
-        //打开全屏
-        winObj.setWindowLayoutFullScreen(true)//返回promise对象,异步操作
-        //获取规避区域系统区域高度
+      // 空安全
+      if (ctx) {
+        const winObj = await window.getLastWindow(ctx) // 上层窗口对象
+
+        // 打开全屏
+        winObj.setWindowLayoutFullScreen(true) // 异步操作
+        // logger.info('FullScreen封装', '完成')
+
+        // 获取规避区域的高度
         const statusBar = winObj.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)
-        // 存在AppStroage中方便页面使用
-        AppStorage.setOrCreate('topHeight',px2vp(statusBar.topRect.height))
-        //获取底部导航栏高度
+        // appstorage中存一份 上规避区高度  下规避区高度
+        AppStorage.setOrCreate('topHeight', px2vp(statusBar.topRect.height))
+
         const naviBar = winObj.getWindowAvoidArea(window.AvoidAreaType.TYPE_NAVIGATION_INDICATOR)
-        AppStorage.setOrCreate('bottomHeight',px2vp(naviBar.bottomRect.height))
+        AppStorage.setOrCreate('bottomHeight', px2vp(naviBar.bottomRect.height))
+
       }
-    }catch (err) {
-      logger.error('FullScreen enable error',JSON.stringify(err))
+    } catch (err) {
+      logger.error('FullScreen enable error', JSON.stringify(err))
     }
+
   }
 
-  async disableFullScreen(){
+  // 退出全屏
+  async disable() {
     try {
-      //传入上下文 定义在entryAbility中
       const ctx = AppStorage.get<Context>('context')
-      if (ctx){
-        const winObj = await window.getLastWindow(ctx) //获得上层窗口对象
-        //关闭全屏
-        winObj.setWindowLayoutFullScreen(false)//返回promise对象,异步操作
-        // //获取规避区域系统区域高度
-        // const statusBar = winObj.getWindowAvoidArea(window.AvoidAreaType.TYPE_SYSTEM)
-        // // 存在AppStroage中方便页面使用
-        // AppStorage.setOrCreate('topHeight',px2vp(statusBar.topRect.height))
-        // //获取底部导航栏高度
-        // const naviBar = winObj.getWindowAvoidArea(window.AvoidAreaType.TYPE_NAVIGATION_INDICATOR)
-        // AppStorage.setOrCreate('bottomHeight',px2vp(naviBar.bottomRect.height))
+      // 空安全
+      if (ctx) {
+        const winObj = await window.getLastWindow(ctx) // 上层窗口对象
+
+        // 打开全屏
+        winObj.setWindowLayoutFullScreen(false) // 异步操作
+        // logger.info('FullScreen封装', '完成')
+
+
+        AppStorage.setOrCreate('topHeight', 0)
+
+        AppStorage.setOrCreate('bottomHeight', 0)
+
       }
-    }catch (err) {
-      logger.error('FullScreen enable error',JSON.stringify(err))
+    } catch (err) {
+      logger.error('FullScreen enable error', JSON.stringify(err))
     }
   }
 }
 
-export let SetFullScreen = new FullScreen()
+export const fullScreen = new FullScreen()
+
+// obj.enable() // 开启全屏

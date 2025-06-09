@@ -1,11 +1,10 @@
-import { FilterButton,
-  HcSkeleton,
-  HcSkeletonItem, HcTag, QuestionItemComp, QuestionListComp } from "../../commons/components"
-import { http } from "../../commons/utils"
+import { FilterButton, HcTag, QuestionItemComp, QuestionListComp } from "../../commons/components"
+import { LOGIN_EVENT } from "../../commons/constants"
+import { http } from "../../commons/utils/Http"
 import { QuestionType, SortType } from "../../models"
 import { emitter } from "@kit.BasicServicesKit"
+import { promptAction } from "@kit.ArkUI"
 
-import { LOGIN_EVENT} from '../../commons/constants'
 // 只支持全局
 @Extend(Text)
 function textTitle() {
@@ -19,7 +18,16 @@ function textTitle() {
 @Component
 export struct HomeCategory {
   // 将来请求后端的数据
-  @State list: QuestionType[] = []
+  @State list: QuestionType[] = [
+  // { id: 1, name: 'ArkTS', displayNewestFlag: 0 },
+  // { id: 2, name: 'ArkUI', displayNewestFlag: 1 },
+  // { id: 3, name: 'Hap', displayNewestFlag: 1 },
+  // { id: 4, name: 'Hsp', displayNewestFlag: 0 },
+  // { id: 5, name: 'Har', displayNewestFlag: 0 },
+  // { id: 6, name: 'Ability', displayNewestFlag: 0 },
+  // { id: 7, name: 'Stage', displayNewestFlag: 0 },
+  // { id: 8, name: 'Kit', displayNewestFlag: 0 }
+  ]
   // 表示当前的分类下标
   @State activeIndex: number = 0
   // 筛选半模态的显示隐藏
@@ -30,7 +38,6 @@ export struct HomeCategory {
   @State filterDataSort: SortType = SortType.Default
   // 记录真正的排序方式  完成才是真正确认下来
   @State sort: SortType = SortType.Default
-  @State firstLoad:boolean = true
 
   // 筛选模态框的结构 builder
   @Builder
@@ -46,7 +53,7 @@ export struct HomeCategory {
             this.filterDataIndex = 0
             this.filterDataSort = SortType.Default
           })
-        Text('筛选题目')
+        Text(this.filterDataSort + '筛选题目' + this.filterDataIndex)
           .layoutWeight(1)
           .fontSize(18)
           .fontWeight(500)
@@ -143,46 +150,21 @@ export struct HomeCategory {
     .height('100%')
   }
 
-  @Builder
-  SkeletonBuilder() {
-    HcSkeleton() {
-      Column() {
-        Row({ space: 16 }) {
-          HcSkeletonItem({ widthValue: 60 })
-          HcSkeletonItem({ widthValue: 100 })
-          HcSkeletonItem({ widthValue: 80 })
-          HcSkeletonItem({ widthValue: 40 })
-        }
-        .height(44)
-        .width('100%')
-
-        ForEach([1, 2, 3, 4, 5, 6], () => {
-          Column({ space: 10 }) {
-            HcSkeletonItem({ widthValue: '90%' })
-            HcSkeletonItem({ widthValue: '45%' })
-          }
-          .height(80)
-          .width('100%')
-          .alignItems(HorizontalAlign.Start)
-          .justifyContent(FlexAlign.Center)
-        })
-      }
-      .padding({ left: 16, right: 16 })
-    }
-  }
-
   aboutToAppear(): void {
-    this.getCategory()
-    emitter.on(LOGIN_EVENT,()=>{
-      this.getCategory()
+    this.getCategory() // 获取分类
+
+    // 触发 LOGIN_EVENT 更新数据
+    emitter.on(LOGIN_EVENT, () => {
+      this.getCategory() // 获取分类
     })
+
   }
 
   async getCategory() {
+    promptAction.showToast({ message: '获取分类' })
     // 请求分类
     const res = await http.request<QuestionType[]>({ url: 'question/type' })
     this.list = res // 分类数组
-    this.firstLoad =false
   }
 
   @Builder
@@ -214,48 +196,45 @@ export struct HomeCategory {
 
   build() {
     Stack({ alignContent: Alignment.TopEnd }) {
-      if (this.firstLoad){
-        this.SkeletonBuilder()
-      }else {
-        Tabs({ index: this.activeIndex }) {
-          // { id: , name: , 是否最新: true/false }
-          ForEach(this.list, (item: QuestionType, index: number) => {
-            TabContent() {
-              // Text(item.name)
-              // HcTag({ text: '地狱', color: '#8df' })
-              // QuestionItemComp({
-              //   item: {
-              //     id: '1',
-              //     stem: '如何删除Record中的元素',
-              //     likeCount: 3,
-              //     views: 1738,
-              //     readFlag: 1,
-              //     difficulty: 5
-              //   }
-              //
-              // })
+      Tabs({ index: this.activeIndex }) {
+        // { id: , name: , 是否最新: true/false }
+        ForEach(this.list, (item: QuestionType, index: number) => {
+          TabContent() {
+            // Text(item.name)
+            // HcTag({ text: '地狱', color: '#8df' })
+            // QuestionItemComp({
+            //   item: {
+            //     id: '1',
+            //     stem: '如何删除Record中的元素',
+            //     likeCount: 3,
+            //     views: 1738,
+            //     readFlag: 1,
+            //     difficulty: 5
+            //   }
+            //
+            // })
 
-              QuestionListComp({
-                typeId: item.id, // 分类id传入  将来根据分类id获取分类列表数据 渲染
-                sort: this.sort, // 用户最终确认的排序方式
-                activeIndex: this.activeIndex, // 当前选中的tab
-                index: index // 自己的下标
-              })
-            }.tabBar(this.TabBarBuilder(item, index))
-          })
-        }
-        .onTabBarClick((index) => {
-          this.activeIndex = index
+            QuestionListComp({
+              typeId: item.id, // 分类id传入  将来根据分类id获取分类列表数据 渲染
+              sort: this.sort, // 用户最终确认的排序方式
+              activeIndex: this.activeIndex, // 当前选中的tab
+              index: index // 自己的下标
+            })
+          }.tabBar(this.TabBarBuilder(item, index))
         })
-        .animationDuration(0)
-        .barMode(BarMode.Scrollable)
-        .barHeight(44)
-        .scrollable(false)
-        .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
       }
+      .onTabBarClick((index) => {
+        this.activeIndex = index
+      })
+      .animationDuration(0)
+      .barMode(BarMode.Scrollable)
+      .barHeight(44)
+      .scrollable(false)
+      .divider({ strokeWidth: 0.5, color: $r('app.color.common_gray_border') })
 
 
       Row() {
+        Text(this.sort.toString())
         Image($r('app.media.ic_home_filter'))
           .width(24)
           .aspectRatio(1)

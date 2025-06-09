@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8"/>
+    <meta
+            name="viewport"
+            content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <title>Question</title>
+    <link rel="stylesheet" href="./github.min.css"/>
+    <script src="./highlight.min.js"></script>
+    <style>
+        body {
+          font-size: 14px;
+          line-height: 1.6;
+          margin: 0;
+          padding: 16px;
+        }
+        img {
+          max-width: 100%;
+        }
+        pre code {
+          background-color: #f5f5f5 !important;
+          border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+<div id="content"></div>
+<script>
+    // 可以给空白页面 投喂 结构
+    function writeHtml(str) {
+      const el = document.querySelector('#content')
+      el.innerHTML = str
+      hljs.highlightAll()
+    }
+    // writeHtml('123')
+    // 前端文字结构<span>123</span>  等价于鸿蒙中Text('123')
+    // 前端大标题结构<h1>123</h1>
+    // 前段列表结构  <ul><li>苹果</li><li>rap</li><li>🏀</li></ul>
+    // writeHtml(`
+    //   <ul>
+    //     <li>苹果</li>
+    //     <li>rap</li>
+    //     <li>🏀</li>
+    //   </ul>
+    // `)
+    // writeHtml(this.item.answer) // 展示出正确的好看的UI
+</script>
+</body>
+</html>

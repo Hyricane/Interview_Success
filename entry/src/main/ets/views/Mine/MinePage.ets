@@ -1,6 +1,6 @@
 import { HcClockIn } from '../../commons/components'
 import { promptAction, router } from '@kit.ArkUI'
-import { FormatTime, statusBar,auth, UserInfoKey } from '../../commons/utils'
+import { FormatTime, statusBar, UserInfoKey } from '../../commons/utils'
 import { User } from '../../models'
 
 interface Nav {
@@ -19,7 +19,7 @@ interface Tool {
 
 @Component
 export struct MinePage {
-  @StorageProp(UserInfoKey) user: User = {} as User
+  @StorageLink(UserInfoKey) user: User = {} as User
   @StorageProp('topHeight')
   topHeight: number = 0
 
@@ -87,12 +87,18 @@ export struct MinePage {
   build() {
     Column({ space: 16 }) {
       Row({ space: 12 }) {
+        // 前面真 不走后面
+        // 前面假  走后面
+        // ! 逻辑或 短路 =>  给默认值
+        // 前面真 走后面
+        // 前面假 不走后面
+        // ! 逻辑与 短路 => 加if判断
         Image(this.user.avatar || $r('app.media.ic_mine_avatar'))
           .alt($r('app.media.ic_mine_avatar'))
           .width(55)
           .aspectRatio(1)
           .borderRadius(55)
-        // 是否登录
+        // 是否登录 token是用户信息的重要标识
         if (this.user.token) {
           Column({ space: 4 }) {
             Text(this.user.nickName || this.user.username)
@@ -124,7 +130,7 @@ export struct MinePage {
             })
         }
 
-        HcClockIn({ clockInCount: this.user.clockinNumbers})
+        HcClockIn({ clockInCount: this.user.clockinNumbers })
       }
       .width('100%')
       .height(100)
@@ -156,7 +162,7 @@ export struct MinePage {
         this.navBuilder({
           icon: $r('app.media.ic_mine_study'),
           name: '累计学时',
-          other: FormatTime.getDHM(this.user.totalTime),
+          other: FormatTime.getDHM(this.user.totalTime), // 分钟 小时 天
           onClick: () => {
             // TODO
           }
@@ -189,6 +195,13 @@ export struct MinePage {
       .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
+
+      Column() {
+        Button('点击token过期')
+          .onClick(() => {
+            this.user.token = 'hhhh'
+          })
+      }
 
     }
     .padding(16)

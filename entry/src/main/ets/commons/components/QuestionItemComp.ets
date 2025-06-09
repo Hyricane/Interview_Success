@@ -1,10 +1,22 @@
-import { QuestionItem } from '../../models'
-import { HcTag } from './HcTag'
+// 后端返回一个列表数据  ForEach  拿到item
+// QuestionItemComp({item: item})
 
-@Preview
+import { HcTag } from ".";
+import { QuestionItem } from "../../models";
+
+// 是否为第一个   Extend针对组件封装单独的样式   Style通用样式
+@Extend(Text)
+function grayText(isStart: boolean = false) {
+  .lineHeight(13)
+  .fontSize(13)
+  .fontColor($r('app.color.common_gray_01'))
+  .padding({ left: isStart ? 0 : 12, right: 12 })
+}
+
+
 @Component
 export struct QuestionItemComp {
-  @Prop item: QuestionItem = {} as QuestionItem
+  @Prop item: Partial<QuestionItem> = {}
 
   build() {
     Column({ space: 10 }) {
@@ -19,15 +31,14 @@ export struct QuestionItemComp {
       }
       .width('100%')
 
+      // 吃了不看文档的亏!!!
       RowSplit() {
-        Text('点赞 ' + this.item.likeCount)
+        Text(`点赞 ${this.item.likeCount}`)
           .grayText(true)
-        Text('浏览 ' + this.item.views)
+        Text(`浏览 ${this.item.views}`)
+          .grayText(false)
+        Text(this.item.readFlag == 1 ? '已看过' : '未看')
           .grayText()
-        if (this.item.readFlag === 1) {
-          Text('已看过')
-            .grayText()
-        }
       }
     }
     .padding({ left: 16, right: 16 })
@@ -36,12 +47,4 @@ export struct QuestionItemComp {
     .alignItems(HorizontalAlign.Start)
     .justifyContent(FlexAlign.Center)
   }
-}
-
-@Extend(Text)
-function grayText(isStart: boolean = false) {
-  .lineHeight(13)
-  .fontSize(13)
-  .fontColor($r('app.color.common_gray_01'))
-  .padding({ left: isStart ? 0 : 12, right: 12 })
 }

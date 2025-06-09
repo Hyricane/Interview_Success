@@ -1,12 +1,14 @@
 import { router } from '@kit.ArkUI'
 
+// 直接可在预览器预览组件
+// @Preview
 @Component
 export struct HcNavBar {
   @StorageProp('topHeight')
   topHeight: number = 0
   // 标题文字
   @Prop
-  title: string = ''
+  title: string = '登录'
   // 是否有下边框
   @Prop
   showBorder: boolean = false

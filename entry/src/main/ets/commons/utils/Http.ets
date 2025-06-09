@@ -1,91 +1,92 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "@ohos/axios";
-import { auth } from ".";
-import { User } from "../../models";
-import { promptAction, router } from "@kit.ArkUI";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "@ohos/axios"
+import { auth } from "."
+import { QuestionType, User } from "../../models"
+import { promptAction, router } from "@kit.ArkUI"
 
-//测试类型
-// interface CateResType{
-//   code:number
-//   success:boolean
-//   message:string
-//   data:QuestionType[]
-// }
-//
-// async aboutToAppear(){
-//   const res = await axios<null,AxiosResponse<CateResType,null>,null>({
-//     url:'https://api-harmony-teach.itheima.net/hm/question/type'
-//   })
-//
-//   res.data//返回数据
-//   res.data.message
-//   res.data.data
-  // 1.泛型麻烦 希望可以省略不需要的泛型 =>自行封装请求类
-  // 2.获取返回数据麻烦,希望将res.data集成在一起 => 拦截器
-// }
-//由此,我们基于Axios自行封装类Http
-
-// 定义通用类型
-// T作为使用时传入的data的类型
-interface INTERVIEW_ResType<T>{
-  code:number
-  success:boolean
-  message:string,
-  data:T
+// 面试通项目 后端返回的数据通用类型
+interface INTERVIEW_ResType<T> {
+  code: number
+  success: boolean
+  message: string
+  data: T
 }
-// 创建axios实例
+
+// 创建axios实例时
 const instance = axios.create({
-  baseURL:'https://api-harmony-teach.itheima.net/hm/',
-  // 最大延迟时间
-  timeout:10000
+  // 基础地址
+  baseURL: 'https://api-harmony-teach.itheima.net/hm/',
+  // 超时时间   1秒内数据回来就ok   超过1秒数据没回来 就算请求失败
+  timeout: 10000,
 })
-
-// 添加请求拦截器
-instance.interceptors.request.use((config:InternalAxiosRequestConfig)=>{//config为发送请求时传入的对象
+// !添加请求拦截器
+// 所有请求都得来这边执行以下 才能发送到服务器
+instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  // 在发送请求之前做些什么
+  // ! config 就是各位在发请求时传的那个 obj
+  // config.url = 'https://www.baidu.com'
+  // config.headers.a = 'b'
   const user = auth.getUser()
-  //如果请求中含有token
-  if (user.token){
-    //则对请求数据头添加以下字段
-    config.headers.Authorization = `Bearer chuanjia${user.token}`
+  if (user.token) {
+    // 有token 再加请求头
+    config.headers.Authorization = `Bearer ${user.token}`
   }
-  return config
-},
-  (err:AxiosError)=>{
-  return Promise.reject(err)
-  })
+  // AlertDialog.show({ message: JSON.stringify(config, null, 4) })
 
-
-// 添加响应拦截器
-instance.interceptors.response.use((response:AxiosResponse) => {
-  // 2xx 范围内的状态码都会触发该函数。
-  // 剥离出关键响应数据
-  if (response.data.code==10000) {
-    return response.data.data
-  }else {
-    return Promise.reject(response.data)
-  }
-}, (error:AxiosError) => {
-  // 超出 2xx 范围的状态码都会触发该函数。
-  // 对响应错误做点什么
-  // token并非不变,一段时间后会过期,需要做处理,重新登录添加新token即可
-  // 判断是否是token过期引起的错误
-  if (error.response?.status==401) {
-    // 清空登录信息
-    auth.setUser({} as User)
-    //跳转到登录页
-    router.pushUrl({url:'pages/LoginPage'},router.RouterMode.Single)
-    promptAction.showToast({message:'登录已过期,请重新登录'})
-  }
+  return config;
+}, (error: AxiosError) => {
+  // 对请求错误做些什么
+  return Promise.reject(error);
 });
 
-export class Http{
-  //AxiosRequestConfig是Axios中封装好的对象类型,含有发送请求的所有类型
-  // AxiosRequestConfig后可传泛型,即规定data[]的类型.eg AxiosRequestConfig<string>,data类型为string
-  request<T,R=Object>(obj:AxiosRequestConfig<R>){
-    // AxiosResponse<T,null>,形式泛型T
-    // return axios<null,AxiosResponse<INTERVIEW_ResType<T>,null>,null>(obj)
+// 给instance添加响应拦截器
+instance.interceptors.response.use((response: AxiosResponse) => {
+  // 2xx 范围内的状态码都会触发该函数。
+  // 对响应数据做点什么
+  if (response.data.code == 10000) {
+    return response.data.data // 需要将关键数据剥离出来 供给客户端开发
+  } else {
+    // 这次请求成功了 但是没拿到数据 => 返回失败的promise
+    // AlertDialog.show({message: ''})
+    return Promise.reject(response.data)
+  }
+}, (error: AxiosError) => {
+  // 超出 2xx 范围的状态码都会触发该函数。
+  // 咱们看看响应一旦出错 拿到的信息
+  // AlertDialog.show({ message: error.response?.status.toString() })
 
-    // 因为关键数据已经被剥离,所以响应数据泛型就为传入泛型
-    return instance<null,T,R>(obj)
+  if (error.response?.status == 401) {
+    // 401
+    // 1. 过期的信息删除
+    auth.setUser({} as User)
+    // 2. 回到登录
+    router.pushUrl({ url: 'pages/LoginPage' }, router.RouterMode.Single)
+    // 3. 给个提示
+    promptAction.showToast({ message: '重新登录' })
+  }
+
+
+  // 对响应错误做点什么
+  return Promise.reject(error);
+});
+
+
+// 改造一个更好用的axios
+export class Http {
+  // AxiosRequestConfig axios提供的请求对象类型
+  request<T, R = Object>(obj: AxiosRequestConfig<R>) {
+    // !之前第二个泛型很复杂  因为返回的数据没剥离
+    // !现在数据剥离了  而且剥离干干净净  就是你要的数据  所以类型就是你要的数据的类型
+    return instance<null, T, R>(obj)
   }
 }
+
 export const http = new Http()
+
+// http.request<后端返回的真正数据的类型, 提交过去的类型>({ url: '', data: {} })
+
+// http.request({
+//   url: '',
+//   method: '',
+//   params: {},
+//   data
+// })

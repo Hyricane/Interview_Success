@@ -1,14 +1,18 @@
 @Component
 export struct HcClockIn {
-  @Prop clockInCount:number=0
+  // 大于表示已打卡
+  @Prop clockInCount: number = 0
+
   build() {
-    Row(){
-      if (this.clockInCount>0){
-        Column(){
+    Row() {
+
+      if (this.clockInCount > 0) {
+        Column() {
           Text('已连续打卡')
             .fontColor($r('app.color.black'))
             .fontSize(8)
-          Text(){
+
+          Text() {
             Span(this.clockInCount.toString())
               .fontSize(12)
               .fontWeight(600)
@@ -17,18 +21,18 @@ export struct HcClockIn {
           }
           .fontColor($r('app.color.black'))
         }
-        .margin({ left: 30})
-      }else {
+        .margin({ left: 30 })
+      } else {
         Text('打卡')
-          .fontColor($r('app.color.black'))
           .fontSize(18)
           .fontWeight(500)
+          .fontColor($r('app.color.black'))
           .margin({ left: 30, top: -4 })
       }
     }
     .width(74)
     .height(28)
     .backgroundImage($r('app.media.ic_common_clocked'))
-    .backgroundImageSize(ImageSize.Contain)
+    .backgroundImageSize(ImageSize.Contain) // 完整看到图片
   }
 }

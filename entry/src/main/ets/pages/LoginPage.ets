@@ -1,10 +1,10 @@
 import { HcNavBar } from '../commons/components'
+import { promptAction, router } from '@kit.ArkUI'
 import { auth, http } from '../commons/utils'
-import router from '@ohos.router'
 import { User } from '../models'
-import { promptAction } from '@kit.ArkUI'
-import { emitter } from '@kit.BasicServicesKit'
 import { LOGIN_EVENT } from '../commons/constants'
+import { emitter } from '@kit.BasicServicesKit'
+
 
 @Entry
 @Component
@@ -17,49 +17,101 @@ struct LoginPage {
   code: string = 'Hmheima%123'
   @State
   isAgree: boolean = false
+  // 登录请求的过程
   @State
   loading: boolean = false
+
+  // aboutToAppear(): void {
+  //   let obj = router.getParams() as Record<string, string>
+  //
+  //   AlertDialog.show({ message: '我一会要去' + obj.return_url })
+  //
+  // }
+
   async login() {
+    if (this.loading) {
+      return
+    }
+    if (!this.mobile) {
+      return promptAction.showToast({ message: '请输入用户名' })
+    }
+    if (!this.code) {
+      return promptAction.showToast({ message: '请输入密码' })
+    }
+    if (!this.isAgree) {
+      return promptAction.showToast({ message: '请勾选已阅读并同意' })
+    }
+
+    /*
+     * 正常情况下
+     * 对于一个请求来说
+     * 成功 then   await后面的代码
+     * 失败 catch  catch里面的代码
+     *
+     * 实际开发 后端一般会在请求成功后返回一个成功的promise
+     * 实际开发 后端一般会在请求失败后返回一个成功的promise
+     *
+     * 后端的视角
+     * 一个请求只要是正常发送了
+     * 无论拿到数据了  还是没拿到数据  都认为这次请求是成功的
+     * 额外给了你个东西
+     *
+     * 打个比方:
+     * 张三 有一天找 李四  借钱
+     * 李四: 我考虑好了  但是不借你
+     * 李四: 我考虑好了  借你
+     *
+     *
+     * 矛盾: 所有的请求成功  并不意味着 拿到数据了(code  10000 拿到了)
+     * 遇到一个处理一次   一起在拦截器处理
+     *
+     *
+     * */
     try {
-      if (this.loading) {
-        return
-      }
-      if (!this.mobile) {
-        return promptAction.showToast({ message: '请输入用户名' })
-      }
-      if (!this.code) {
-        return promptAction.showToast({ message: '请输入密码' })
-      }
-      if (!this.isAgree) {
-        return promptAction.showToast({ message: '请勾选已阅读并同意' })
-      }
-      this.loading =true
-      const user = await http.request<User>({
-        url:'login',
-        method:'post',
-        data:{
-          username:this.mobile,
-          password:this.code
+      this.loading = true
+      // 发请求
+      const res = await http.request<User>({
+        url: 'login',
+        method: 'post',
+        data: {
+          username: this.mobile,
+          password: this.code
         }
       })
-      this.loading=false
-      AppStorage.setOrCreate<User>('user',user)
-      auth.setUser(user)
-      let obj = router.getParams() as Record<string,string> || {}
+      this.loading = false
+      // AlertDialog.show({
+      //   message: '登录成功:' + JSON.stringify(res, null, 4)
+      // })
+      promptAction.showToast({ message: '登录成功' })
+      // AppStorage.setOrCreate<User>('user', res)
+      auth.setUser(res)
+      emitter.emit(LOGIN_EVENT) // 通知首页更新
+
+      // 不一定是回去 也有可能去一个指定的页面
+      let obj = router.getParams() as Record<string, string> || {}
+      // obj.return_url ? router.pushUrl({ url: obj.return_url }) : router.back()
+
       if (obj.return_url) {
-        router.replaceUrl({url:obj.return_url,params:obj})
-      }else {
+        // 有回跳地址 去回跳页面
+        router.replaceUrl({ url: obj.return_url, params: obj }) // a b c      a c
+      } else {
+        // 正常返回
         router.back()
       }
-    }catch (err){
-      promptAction.showToast({message:err.message})
+
+    } catch (err) {
+      // AlertDialog.show({ message: '登录失败:' + JSON.stringify(err, null, 4) })
+      promptAction.showToast({ message: err.message })
       this.loading = false
     }
 
+
   }
+
   build() {
     Column() {
       HcNavBar({ showRightIcon: false })
+
       Column() {
         Image($r('app.media.icon'))
           .width(120)
@@ -96,12 +148,30 @@ struct LoginPage {
           Text('用户协议')
             .fontSize(14)
             .padding({ right: 4 })
+            .onClick(() => {
+              router.pushUrl({
+                url: '/pages/TestPage'.slice(1),
+                params: {
+                  src: 'http://110.41.143.89/user',
+                  title: '用户协议'
+                }
+              })
+            })
           Text('和')
             .fontSize(14)
             .fontColor($r('app.color.common_gray_01'))
             .padding({ right: 4 })
           Text('隐私政策')
             .fontSize(14)
+            .onClick(() => {
+              router.pushUrl({
+                url: '/pages/TestPage'.slice(1),
+                params: {
+                  src: 'http://110.41.143.89/privacy',
+                  title: '隐私政策'
+                }
+              })
+            })
         }
         .width('100%')
 
@@ -130,7 +200,6 @@ struct LoginPage {
         .onClick(() => {
           // TODO
           this.login()
-          emitter.emit(LOGIN_EVENT)
         })
       }
       .padding({ left: 36, right: 36, top: 30 })
