@@ -242,7 +242,8 @@ export struct QuestionListComp {
                   auth.checkAuth({
                     url: '/pages/QuestionPage'.slice(1),
                     params: {
-                      item: item // item.id
+                      item: item, // item.id
+                      list: this.list // 整个列表数组
                       // xx: 123
                       // yy: 456
                       // zz: 789

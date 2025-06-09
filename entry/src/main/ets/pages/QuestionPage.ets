@@ -1,5 +1,5 @@
 import { HcNavBar, HcTag, HcLoadingDialog } from '../commons/components'
-import { router } from '@kit.ArkUI'
+import { promptAction, router } from '@kit.ArkUI'
 import { QuestionDetail, QuestionPageParams } from '../models'
 import { http } from '../commons/utils/Http'
 import { webview } from '@kit.ArkWeb'
@@ -46,6 +46,7 @@ struct QuestionPage {
   }
 
   @State item: QuestionDetail = {} as QuestionDetail
+  @State list: QuestionDetail[] = []
   controller = new webview.WebviewController()
 
   async aboutToAppear() {
@@ -56,6 +57,9 @@ struct QuestionPage {
       this.item = params.item // 存储传递的参数
       // 请求后端 这个试题的详情
 
+      // 额外收到一个list
+      this.list = params.list as QuestionDetail[]
+
 
       this.yy.open() // 打开组件
       this.item = await http.request<QuestionDetail>({ url: `question/${this.item.id}` })
@@ -63,6 +67,36 @@ struct QuestionPage {
       // this.item.answer  其中含有前端格式的信息
       // AlertDialog.show({ message: JSON.stringify(this.item, null, 4) })
     }
+  }
+
+  async goNextOrPrev(num: -1 | 1) {
+    const index = this.list.findIndex(item => item.id == this.item.id)
+    this.list[index] = this.item // 进入的那个题目也存到list中
+
+    const targetIndex = index + num // 目标数据的下标
+    // 0 => -1        length-1 => length
+    if (targetIndex < 0 || targetIndex > this.list.length - 1) {
+      promptAction.showToast({ message: '到头了' })
+      return
+    }
+    const targetItem = this.list[targetIndex] // 目标数据
+    // AlertDialog.show({ message: JSON.stringify(targetItem, null, 4) })
+
+    // 请求最全的数据  存item   页面绑定item
+    if (targetItem.answer) {
+      // 直接使用targetItem渲染
+      this.item = targetItem
+    } else {
+      this.yy.open()
+      this.item = await http.request<QuestionDetail>({ url: `question/${targetItem.id}` })
+      this.list[targetIndex] = this.item // 完整的数据存到list  希望以后如果数据完整 就不请求后端
+      this.yy.close()
+    }
+
+
+    // 利用控制器重新加载question.html页面  重新触发PageEnd事件
+    this.controller.loadUrl($rawfile('question.html'))
+    // AlertDialog.show({ message: JSON.stringify(this.item, null, 4) })
   }
 
   build() {
@@ -107,6 +141,7 @@ struct QuestionPage {
       // 使用方法1. 配合一个状态变量this.loading  显示隐藏组件本身
       // 使用方法2. 利用控制器 打开 关闭这个组件   this.c.open()   this.c.close()
 
+      // web组件的创建前提是 有答案
       if (this.item.answer) {
         Web({
           // 要用writeHTML方法画UI结构
@@ -133,15 +168,32 @@ struct QuestionPage {
           Text(' 上一题')
             .fontColor($r('app.color.common_gray_01'))
         }
+        .onClick(() => {
+          // 知道当前的item   list
+          // 下一个item
+          this.goNextOrPrev(-1)
+
+          // {name: 'ls'}   找下标  1    下标++    2
+          // [ {name: 'zs'}, {name: 'ls'}, {name: 'ww'} ]
+        })
 
         Row() {
           Text('下一题 ')
             .fontColor($r('app.color.common_gray_03'))
+
           Image($r('sys.media.ohos_ic_public_arrow_right'))
             .width(20)
             .aspectRatio(1)
             .fillColor($r('app.color.common_gray_03'))
         }
+        .onClick(() => {
+          // 知道当前的item   list
+          // 下一个item
+          this.goNextOrPrev(1)
+
+          // {name: 'ls'}   找下标  1    下标++    2
+          // [ {name: 'zs'}, {name: 'ls'}, {name: 'ww'} ]
+        })
       }
       .height(44)
       .width('100%')
