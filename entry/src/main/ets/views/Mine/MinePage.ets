@@ -189,6 +189,7 @@ export struct MinePage {
       .backgroundColor($r('app.color.white'))
       .borderRadius(8)
 
+
     }
     .padding(16)
     .backgroundColor($r('app.color.common_gray_bg'))
