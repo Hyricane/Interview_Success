@@ -3,12 +3,13 @@ import { componentSnapshot, promptAction, router } from '@kit.ArkUI'
 import { QuestionDetail, QuestionPageParams } from '../models'
 import { http } from '../commons/utils/Http'
 import { webview } from '@kit.ArkWeb'
-import image from '@ohos.multimedia.image'
-import { fileIo } from '@kit.CoreFileKit'
+import { tracking } from '../commons/utils/Tracking'
+
 
 @Entry
 @Component
 struct QuestionPage {
+  @State startTime:number = 0//记录开始时间
   @StorageProp('bottomHeight') bottomHeight: number = 0
   yy = new CustomDialogController({
     builder: HcLoadingDialog(), // 指定使用哪个组件
@@ -86,6 +87,14 @@ struct QuestionPage {
       promptAction.showToast({ message: '到头了' })
       return
     }
+
+    //成功切到下一题或上一题,本题用户行为先存数组
+    tracking.record(this.startTime,Date.now(),this.item.id)
+
+    // AlertDialog.show({message:tracking.list.length.toString()})
+
+    this.startTime = Date.now()//设置下一题开始时间
+
     const targetItem = this.list[targetIndex] // 目标数据
     // AlertDialog.show({ message: JSON.stringify(targetItem, null, 4) })
 
@@ -104,6 +113,15 @@ struct QuestionPage {
     // 利用控制器重新加载question.html页面  重新触发PageEnd事件
     this.controller.loadUrl($rawfile('question.html'))
     // AlertDialog.show({ message: JSON.stringify(this.item, null, 4) })
+  }
+
+  onPageShow(): void {
+    this.startTime = Date.now()
+  }
+
+  onPageHide(): void {
+    tracking.record(this.startTime,Date.now(),this.item.id)//记录
+    tracking.report()
   }
 
   build() {

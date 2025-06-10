@@ -82,3 +82,9 @@ export interface QuestionPageParams {
   item: QuestionDetail;
   list: QuestionItem[];
 }
+
+export interface TimeItem {
+  questionId: string;
+  startTime: number;
+  endTime: number;
+}
