@@ -40,6 +40,18 @@ export class Auth {
       })
     }
   }
+
+  // 传入回调函数,满足条件时执行被传入的回调函数
+  checkAuth2(callback:()=>void){
+    const user = this.getUser()
+    if (user.token) {
+      callback()
+    }else {
+      router.pushUrl({
+        url:'pages/LoginPage'
+      })
+    }
+  }
 }
 
 export const auth = new Auth()

@@ -5,6 +5,7 @@ import { promptAction, router } from "@kit.ArkUI"
 import { http } from "../../commons/utils/Http"
 import { QuestionDetail } from "../../models"
 import { tracking } from "../../commons/utils/Tracking"
+import { auth } from "../../commons/utils"
 
 @Component
 export struct HomePage {
@@ -38,7 +39,9 @@ export struct HomePage {
           .width(24)
           .aspectRatio(1)
           .onClick(()=>{
-            this.scanToDetail()
+            auth.checkAuth2(()=>{
+              this.scanToDetail()
+            })
           })
         HcSearchBox({
           layoutWeightValue: 1,
