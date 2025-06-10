@@ -15,3 +15,5 @@ export * from './HcSkeleton'
 export * from './HcNavBar'
 
 export * from './HcLoadingDialog'
+
+export * from './QuestionShareDialog'

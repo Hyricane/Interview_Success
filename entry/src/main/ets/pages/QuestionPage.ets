@@ -1,4 +1,4 @@
-import { HcNavBar, HcTag, HcLoadingDialog } from '../commons/components'
+import { HcNavBar, HcTag, HcLoadingDialog, QuestionShareDialog } from '../commons/components'
 import { promptAction, router } from '@kit.ArkUI'
 import { QuestionDetail, QuestionPageParams } from '../models'
 import { http } from '../commons/utils/Http'
@@ -14,6 +14,14 @@ struct QuestionPage {
     customStyle: true, // 默认情况下 他会给你一个容器写结构
     // alignment: DialogAlignment.Center
   })
+  @State item: QuestionDetail = {} as QuestionDetail
+  shareDialog = new CustomDialogController({
+    builder: QuestionShareDialog({ item: this.item }),
+    customStyle: true,
+    alignment: DialogAlignment.Center,
+  });
+  @State list: QuestionDetail[] = []
+  controller = new webview.WebviewController()
 
   @Builder
   TitleBuilder(text: string) {
@@ -41,13 +49,10 @@ struct QuestionPage {
       MenuItem({ content: this.item.collectFlag == 1 ? '取消收藏' : '收藏' })
       MenuItem({ content: '点我反馈' })
       MenuItem({ content: '试题分享' })
+        .onClick(() => this.shareDialog.open());
     }
     .width(108)
   }
-
-  @State item: QuestionDetail = {} as QuestionDetail
-  @State list: QuestionDetail[] = []
-  controller = new webview.WebviewController()
 
   async aboutToAppear() {
     // AlertDialog.show({ message: JSON.stringify(router.getParams(), null, 4) })
