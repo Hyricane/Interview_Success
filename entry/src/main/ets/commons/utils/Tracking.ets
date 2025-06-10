@@ -31,7 +31,7 @@ class Tracking{
     this.getStore().flushSync()//持久化处理
   }
 
-  async report(force:boolean){
+  async report(force:boolean = false){
     //拿取数据
     const json = this.getStore().getSync(this.dataKey,'[]')
     //转为对象数组
