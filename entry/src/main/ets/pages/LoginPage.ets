@@ -4,6 +4,7 @@ import { auth, http } from '../commons/utils'
 import { User } from '../models'
 import { LOGIN_EVENT } from '../commons/constants'
 import { emitter } from '@kit.BasicServicesKit'
+import { tracking } from '../commons/utils/Tracking'
 
 
 @Entry
@@ -86,7 +87,8 @@ struct LoginPage {
       // AppStorage.setOrCreate<User>('user', res)
       auth.setUser(res)
       emitter.emit(LOGIN_EVENT) // 通知首页更新
-
+      //主动上报
+      tracking.report(true)
       // 不一定是回去 也有可能去一个指定的页面
       let obj = router.getParams() as Record<string, string> || {}
       // obj.return_url ? router.pushUrl({ url: obj.return_url }) : router.back()

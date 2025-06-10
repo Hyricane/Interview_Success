@@ -4,6 +4,7 @@ import { scanBarcode } from "@kit.ScanKit"
 import { promptAction, router } from "@kit.ArkUI"
 import { http } from "../../commons/utils/Http"
 import { QuestionDetail } from "../../models"
+import { tracking } from "../../commons/utils/Tracking"
 
 @Component
 export struct HomePage {
@@ -23,6 +24,11 @@ export struct HomePage {
     }
     .width('100%')
     .padding({ left: 16, right: 16 })
+  }
+
+  //主动上报
+  aboutToAppear(): void {
+    tracking.report(true)
   }
 
   build() {
