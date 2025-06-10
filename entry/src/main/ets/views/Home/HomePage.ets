@@ -1,5 +1,9 @@
 import { HcSearchBox, HcClockIn, HcSkeleton } from "../../commons/components"
 import { HomeCategory } from "./HomeCategory"
+import { scanBarcode } from "@kit.ScanKit"
+import { promptAction, router } from "@kit.ArkUI"
+import { http } from "../../commons/utils/Http"
+import { QuestionDetail } from "../../models"
 
 @Component
 export struct HomePage {
@@ -27,6 +31,9 @@ export struct HomePage {
         Image($r('app.media.ic_home_scan'))
           .width(24)
           .aspectRatio(1)
+          .onClick(()=>{
+            this.scanToDetail()
+          })
         HcSearchBox({
           layoutWeightValue: 1,
         })
@@ -85,5 +92,28 @@ export struct HomePage {
     .height('100%')
     .backgroundColor($r('app.color.common_gray_bg'))
     .padding({ top: this.topHeight })
+  }
+  private async scanToDetail() {
+    // 调用前需要使用canIUse():boolean判断当前设备是否有扫码能力
+    if (canIUse('SystemCapability.Multimedia.Scan.ScanBarcode')) {
+      const res = await scanBarcode.startScanForResult(getContext())
+      //结果.originalValue即为二维码真实数据
+      if (res.originalValue) {//若数据存在
+        try {
+          const item = await http.request<QuestionDetail>({//发送请求
+            url: `question/${res.originalValue}`
+          })
+          router.pushUrl({
+            url: '/pages/QuestionPage'.slice(1),
+            params: {
+              item,
+              list: [item]//数组中只有该项数据
+            }
+          })
+        } catch (e) {
+          promptAction.showToast({ message: '未找到该题' })
+        }
+      }
+    }
   }
 }
