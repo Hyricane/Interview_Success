@@ -1,8 +1,10 @@
 import { HcNavBar, HcTag, HcLoadingDialog, QuestionShareDialog } from '../commons/components'
-import { promptAction, router } from '@kit.ArkUI'
+import { componentSnapshot, promptAction, router } from '@kit.ArkUI'
 import { QuestionDetail, QuestionPageParams } from '../models'
 import { http } from '../commons/utils/Http'
 import { webview } from '@kit.ArkWeb'
+import image from '@ohos.multimedia.image'
+import { fileIo } from '@kit.CoreFileKit'
 
 @Entry
 @Component
