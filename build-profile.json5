@@ -1,6 +1,20 @@
 {
   "app": {
-    "signingConfigs": [],
+    "signingConfigs": [
+      {
+        "name": "default",
+        "type": "HarmonyOS",
+        "material": {
+          "certpath": "C:\\Users\\DELL\\.ohos\\config\\default_mian-shi-tong_2Vx65DKdF_NRo9PqI6yJ29H_ildQ5pA9TgWAoG5kKbA=.cer",
+          "keyAlias": "debugKey",
+          "keyPassword": "0000001B6E226A579889744EAB46BCF57DAEBDFED528754C6EE0FE47D4A382B4F6BDB704BECAC9FAE681C0",
+          "profile": "C:\\Users\\DELL\\.ohos\\config\\default_mian-shi-tong_2Vx65DKdF_NRo9PqI6yJ29H_ildQ5pA9TgWAoG5kKbA=.p7b",
+          "signAlg": "SHA256withECDSA",
+          "storeFile": "C:\\Users\\DELL\\.ohos\\config\\default_mian-shi-tong_2Vx65DKdF_NRo9PqI6yJ29H_ildQ5pA9TgWAoG5kKbA=.p12",
+          "storePassword": "0000001BCA7BB94D0B4A2BE724BBA1BF8D9627A7BB78B91250083863573DDDF70FFED0F4F51D404761BF0F"
+        }
+      }
+    ],
     "products": [
       {
         "name": "default",
