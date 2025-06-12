@@ -19,4 +19,6 @@ export * from './FormatTime'
 
 export * from './Auth'
 
+export * from './History'
+
 // export const fullScreen = xx
