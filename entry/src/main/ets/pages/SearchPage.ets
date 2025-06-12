@@ -63,6 +63,8 @@ struct SearchPage {
           SearchHistory({
             onSearch: keyword => {
               // TODO 进行搜索
+              this.keyword = keyword // 存点击的搜索关键字
+              this.isSearch = true // 打开搜索
             }
           })
         }

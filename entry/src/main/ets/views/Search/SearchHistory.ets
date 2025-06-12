@@ -9,8 +9,7 @@ interface BtnItem {
 export struct SearchHistory {
   @State isDeleting: boolean = false // 表示用户正在删除
   @State keywords: string[] = [] // 搜索过的关键字们
-  onSearch: (val: string) => void = () => {
-  }
+  onSearch: (val: string) => void = () => {}//回调函数收子组件传递参数
 
   aboutToAppear(): void {
     // this.keywords = ['HarmonyOS', 'ArkUI', '大厂', 'Component', 'ArkTS']
