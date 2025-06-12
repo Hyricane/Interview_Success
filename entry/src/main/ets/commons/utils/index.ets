@@ -21,4 +21,6 @@ export * from './Auth'
 
 export * from './History'
 
+export * from './ClockIn'
+
 // export const fullScreen = xx
