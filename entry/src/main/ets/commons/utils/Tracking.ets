@@ -13,7 +13,7 @@ class Tracking{
     if (!this.store) {
       const ctx = AppStorage.get<Context>('context')
       this.store = preferences.getPreferencesSync(ctx,{name:'tracking-store'})
-    }
+    }                                                                                                                                                                                                                                 
 
     return this.store
   }
