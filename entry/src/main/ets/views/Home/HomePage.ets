@@ -46,6 +46,12 @@ export struct HomePage {
         HcSearchBox({
           layoutWeightValue: 1,
         })
+          .onClick(() => {
+            // 进入搜索页面必须先登录  =>>  产品经理(想的功能被市场认可)
+            router.pushUrl({
+              url: '/pages/SearchPage'.slice(1)
+            })
+          })
         HcClockIn({
           clockInCount: 9
         })

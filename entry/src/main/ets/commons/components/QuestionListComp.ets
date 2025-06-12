@@ -45,6 +45,7 @@ export struct QuestionListComp {
   @Prop @Watch('fn') sort: SortType = SortType.Default
   // 传入的分类id
   @Prop typeId: number
+  @Prop keyword: string = ''
   @State list: QuestionItem[] = [] // 文章列表数据 暂时为空
   @State isRefreshing: boolean = false // 是否是下拉状态
   // 节流  请求前打开(true)   请求后关闭(false)
@@ -52,6 +53,7 @@ export struct QuestionListComp {
   // 刚开始数据是加载了一部分  等到有一天数据真全获取完了  改true
   @State isFinished: boolean = false // 标识数据是否全部加载完
   @State page: number = 1 // 页码
+
 
   fn() {
     // 该我更新我才更新
@@ -69,7 +71,8 @@ export struct QuestionListComp {
         type: this.typeId, // 获取哪个分类
         page: this.page, // 获取第几页
         pageSize: 10, // 每页获取几条数据
-        sort: 0 // 10 11 20 21 30  表示排序方式  枚举优化一下
+        sort: 0 ,// 10 11 20 21 30  表示排序方式  枚举优化一下
+        keyword: this.keyword,
         // 还有一些其他参数
       }
     })
@@ -86,7 +89,8 @@ export struct QuestionListComp {
         type: this.typeId, // 获取哪个分类
         page: this.page, // 获取第几页
         pageSize: 10, // 每页获取几条数据
-        sort: this.sort // 排序方式
+        sort: this.sort, // 排序方式
+        keyword: this.keyword
         // 还有一些其他参数
       }
     })
