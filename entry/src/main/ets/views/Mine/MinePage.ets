@@ -165,6 +165,9 @@ export struct MinePage {
           other: FormatTime.getDHM(this.user.totalTime), // 分钟 小时 天
           onClick: () => {
             // TODO
+            router.pushUrl({
+              url:'pages/StudyTimePage'
+            })
           }
         })
       }
