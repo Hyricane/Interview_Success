@@ -54,7 +54,7 @@ export struct HomePage {
             })
           })
         HcClockIn({
-          clockInCount: 9
+          clockInCount: this.user.clockinNumbers
         })
           .onClick(()=>{
             clockIn.request()
