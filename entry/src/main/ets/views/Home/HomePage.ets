@@ -3,13 +3,14 @@ import { HomeCategory } from "./HomeCategory"
 import { scanBarcode } from "@kit.ScanKit"
 import { promptAction, router } from "@kit.ArkUI"
 import { http } from "../../commons/utils/Http"
-import { QuestionDetail } from "../../models"
+import { QuestionDetail, User } from "../../models"
 import { tracking } from "../../commons/utils/Tracking"
-import { auth } from "../../commons/utils"
+import { auth, clockIn, UserInfoKey } from "../../commons/utils"
 
 @Component
 export struct HomePage {
   @StorageProp('topHeight') topHeight: number = 0
+  @StorageProp(UserInfoKey) user: User = {} as User
   swiperList: ResourceStr[] = [
     $r('app.media.banner_ai'),
     $r('app.media.banner_pj'),
@@ -55,6 +56,9 @@ export struct HomePage {
         HcClockIn({
           clockInCount: 9
         })
+          .onClick(()=>{
+            clockIn.request()
+          })
       }
       .padding({ left: 16, right: 16 })
       .height(64)
